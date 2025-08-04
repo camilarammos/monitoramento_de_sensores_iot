@@ -148,7 +148,8 @@ Testes disponíveis:
 
 - Validação da estrutura dos dados gerados (`generate_sensor_data`)
 - Teste de escrita no MySQL (mockado)
-- Testes podem ser executados no contêiner do Spark:
+
+Os testes abaixo devem ser executados no contêiner do Spark:
 
 ```bash
 docker exec -it spark bash
@@ -156,6 +157,7 @@ python -m pytest spark/test_mysql_writer.py -v
 python -m pytest spark/test_consumer.py -v
 ```
 
+Os testes abaixo devem ser executados no contêiner do Producer:
 ```bash
 docker exec -it producer bash
 python -m pytest spark/test_generate_sensor_data_structure.py -v
