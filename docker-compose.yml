@@ -43,15 +43,17 @@ services:
        - db_data:/var/lib/mysql
 
   producer:
-    build: ./producer
+    build:
+      context: .
+      dockerfile: producer/Dockerfile
     container_name: producer
     depends_on:
       - kafka
 
   spark:
     build:
-      context: ./spark
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: spark/Dockerfile
     container_name: spark
     depends_on:
       - kafka

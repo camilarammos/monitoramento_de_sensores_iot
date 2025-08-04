@@ -1,5 +1,10 @@
 FROM python:3.9-slim
+
 WORKDIR /app
+
 COPY iot_producer.py .
-RUN pip install faker kafka-python
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 CMD ["python", "iot_producer.py"]
