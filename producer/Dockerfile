@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY producer/iot_producer.py .
 COPY requirements.txt .
+COPY tests/*.py .
 
 RUN pip install --no-cache-dir -r requirements.txt
 

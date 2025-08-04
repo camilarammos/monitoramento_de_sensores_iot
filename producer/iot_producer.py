@@ -55,13 +55,14 @@ def generate_sensor_data():
 # ===============================
 # Loop contínuo para enviar dados
 # ===============================
-while True:
-    try:
-        data = generate_sensor_data()
-        producer.send("iot-sensores", value=data)
-        logging.info(f"Dado enviado: {data}")
-        time.sleep(1)
-    except Exception as e:
-        logging.error(f"Erro ao enviar dado para o Kafka: {e}")
-        time.sleep(2)
+if __name__=="__main__":
+    while True:
+        try:
+            data = generate_sensor_data()
+            producer.send("iot-sensores", value=data)
+            logging.info(f"Dado enviado: {data}")
+            time.sleep(1)
+        except Exception as e:
+            logging.error(f"Erro ao enviar dado para o Kafka: {e}")
+            time.sleep(2)
 
