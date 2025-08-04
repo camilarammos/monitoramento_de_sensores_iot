@@ -3,6 +3,8 @@ from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import *
 import logging
 
+from mysql_writer import write_to_mysql
+
 # ======================
 # Configuração de Log
 # ======================
@@ -72,6 +74,8 @@ def write_to_mysql(batch_df, epoch_id):
 # ▶️ Inicia o Streaming
 # =====================
 logging.info("Iniciando streaming de leitura...")
-query = json_df.writeStream.foreachBatch(write_to_mysql).start()
-query.awaitTermination()
+
+if __name__=="__main__":
+    query = json_df.writeStream.foreachBatch(write_to_mysql).start()
+    query.awaitTermination()
 

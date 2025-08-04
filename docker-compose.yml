@@ -49,6 +49,8 @@ services:
     container_name: producer
     depends_on:
       - kafka
+    volumes:
+      - ./tests:/tests
 
   spark:
     build:
@@ -60,6 +62,7 @@ services:
       - mysql
     volumes:
       - ./spark:/opt/spark-app
+      - ./tests:/tests
     command:
       [
         "spark-submit",
