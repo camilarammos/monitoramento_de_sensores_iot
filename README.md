@@ -121,7 +121,17 @@ Serviços disponíveis:
   "unidade": "C"
 }
 ```
+---
 
+## 📜 Acesso o banco de dados e consulta a tabela
+
+```
+sudo docker exec -it mysql_monitoramento mysql -uroot -proot sensores
+```
+
+```
+select * from leituras limit 10;
+```
 ---
 
 ## 🛡️ Logs e Resiliência
