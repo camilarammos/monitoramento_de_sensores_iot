@@ -31,8 +31,9 @@ Enviar dados de sensores IoT, como temperatura, umidade, pressão, luminosidade 
 
 ```
 monitoramento_de_sensores_iot/
-├── Dockerfile
 ├── README.md
+├── dist
+│   └── common-0.1-py3-none-any.whl
 ├── docker-compose.yml
 ├── jars
 │   └── mysql-connector-j-8.3.0.jar
@@ -44,21 +45,17 @@ monitoramento_de_sensores_iot/
 ├── spark
 │   ├── Dockerfile
 │   ├── __init__.py
-│   ├── __pycache__
-│   │   └── mysql_writer.cpython-313.pyc
-│   ├── iot_consumer_spark_mysql.py
-│   └── mysql_writer.py
+│   ├── consumer_main.py
+│   ├── json_parser.py
+│   ├── kafka_reader.py
+│   ├── mysql_writer.py
+│   ├── pipeline.py
+│   └── session.py
 └── tests
-    ├── __pycache__
-    │   ├── conftest.cpython-39-pytest-8.4.1.pyc
-    │   ├── test_consumer.cpython-39-pytest-8.4.1.pyc
-    │   ├── test_mysql_writer.cpython-39-pytest-8.4.1.pyc
-    │   └── test_producer.cpython-39-pytest-8.4.1.pyc
     ├── conftest.py
     ├── test_consumer.py
     ├── test_generate_sensor_data_structure.py
     └── test_mysql_writer.py
-└── README.md
 ```
 ---
 
