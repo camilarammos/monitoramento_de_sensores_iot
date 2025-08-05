@@ -51,6 +51,10 @@ services:
       - kafka
     volumes:
       - ./tests:/tests
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: iot-sensores
+      SEND_INTERVAL: 1
 
   spark:
     build:
@@ -63,6 +67,16 @@ services:
     volumes:
       - ./spark:/opt/spark-app
       - ./tests:/tests
+      - ./jars:/opt/spark/jars
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_TOPIC: iot-sensores
+      CHECKPOINT_PATH: /tmp/spark-checkpoint
+      MYSQL_JAR_PATH: /opt/spark/jars/mysql-connector-j-8.3.0.jar
+      MYSQL_URL: jdbc:mysql://mysql:3306/sensores
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_TABLE: leituras
     command:
       [
         "spark-submit",

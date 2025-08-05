@@ -1,5 +1,4 @@
 pyspark[sql]==3.5
 faker
 kafka-python
-pyspark
 pytest

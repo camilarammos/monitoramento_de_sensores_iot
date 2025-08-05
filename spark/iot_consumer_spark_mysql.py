@@ -1,29 +1,39 @@
+import os
+import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import *
-import logging
-
 from mysql_writer import write_to_mysql
 
-# ======================
-# Configuração de Log
-# ======================
+# =========================
+# Configuração de Logging
+# =========================
 logging.basicConfig(
     level=logging.INFO,
     format='[%(levelname)s] %(asctime)s - %(message)s'
 )
 
+# =========================
+# Configurações via Ambiente
+# =========================
+KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "iot-sensores")
+CHECKPOINT_PATH = os.getenv("CHECKPOINT_PATH", "/tmp/spark-checkpoint")
+JDBC_JAR_PATH = os.getenv("MYSQL_JAR_PATH", "/opt/spark/jars/mysql-connector-j-8.3.0.jar")
+
 # ==========================
 # Inicializa SparkSession
 # ==========================
-spark = SparkSession.builder.appName("IoTConsumerMySQL") \
-    .config("spark.jars", "/opt/spark/jars/mysql-connector-j-8.3.0.jar") \
+spark = SparkSession.builder \
+    .appName("IoTConsumerMySQL") \
+    .config("spark.jars", JDBC_JAR_PATH) \
+    .config("spark.sql.shuffle.partitions", "2") \
     .getOrCreate()
 
 logging.info("Sessão Spark iniciada.")
 
 # ===================
-# 🧾 Define o Esquema
+# Define o Esquema
 # ===================
 schema = StructType([
     StructField("sensor_id", StringType()),
@@ -41,8 +51,8 @@ schema = StructType([
 logging.info("Conectando ao Kafka...")
 
 df = spark.readStream.format("kafka") \
-    .option("kafka.bootstrap.servers", "kafka:9092") \
-    .option("subscribe", "iot-sensores") \
+    .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP) \
+    .option("subscribe", KAFKA_TOPIC) \
     .load()
 
 # ============================
@@ -53,11 +63,17 @@ json_df = df.selectExpr("CAST(value AS STRING)") \
     .select("data.*")
 
 # =====================
-# ▶️ Inicia o Streaming
+# Inicia o Streaming
 # =====================
 logging.info("Iniciando streaming de leitura...")
 
 if __name__ == "__main__":
-    query = json_df.writeStream.foreachBatch(write_to_mysql).start()
+    query = json_df.writeStream \
+        .outputMode("append") \
+        .trigger(processingTime="10 seconds") \
+        .option("checkpointLocation", CHECKPOINT_PATH) \
+        .foreachBatch(write_to_mysql) \
+        .start()
+
     query.awaitTermination()
 

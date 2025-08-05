@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import random
@@ -13,6 +14,13 @@ logging.basicConfig(
     format='[%(levelname)s] %(asctime)s - %(message)s'
 )
 
+# ======================
+# Configurações por ambiente
+# ======================
+KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "iot-sensores")
+SEND_INTERVAL = float(os.getenv("SEND_INTERVAL", 1.0))
+
 fake = Faker()
 SENSOR_TYPES = ["temperatura", "umidade", "pressao", "luminosidade"]
 
@@ -23,7 +31,7 @@ producer = None
 for attempt in range(10):
     try:
         producer = KafkaProducer(
-            bootstrap_servers='kafka:9092',
+            bootstrap_servers=KAFKA_BOOTSTRAP,
             value_serializer=lambda v: json.dumps(v).encode('utf-8')
         )
         logging.info("Conectado ao Kafka com sucesso.")
@@ -39,7 +47,7 @@ if not producer:
 # ===========================
 # Função para gerar os dados
 # ===========================
-def generate_sensor_data():
+def generate_sensor_data() -> dict:
     tipo = random.choice(SENSOR_TYPES)
     unidade = "C" if tipo == "temperatura" else "%"
     return {
@@ -55,14 +63,14 @@ def generate_sensor_data():
 # ===============================
 # Loop contínuo para enviar dados
 # ===============================
-if __name__=="__main__":
+if __name__ == "__main__":
+    logging.info("Iniciando envio de dados IoT para o Kafka...")
     while True:
         try:
             data = generate_sensor_data()
-            producer.send("iot-sensores", value=data)
+            producer.send(KAFKA_TOPIC, value=data)
             logging.info(f"Dado enviado: {data}")
-            time.sleep(1)
+            time.sleep(SEND_INTERVAL)
         except Exception as e:
             logging.error(f"Erro ao enviar dado para o Kafka: {e}")
             time.sleep(2)
-
