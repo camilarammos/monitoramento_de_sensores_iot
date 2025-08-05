@@ -1,9 +1,11 @@
 import pytest
-from iot_producer import generate_sensor_data
+from iot_producer import SensorDataGenerator
 
 
 def test_generate_sensor_data_structure():
-    data = generate_sensor_data()
+    
+    data_generator = SensorDataGenerator()
+    data = data_generator.generate()
 
     # Verifica se todos os campos existem
     expected_keys = {

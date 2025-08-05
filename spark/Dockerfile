@@ -7,9 +7,15 @@ WORKDIR /usr/src/app
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
-COPY spark/iot_consumer_spark_mysql.py .
-COPY spark/mysql_writer.py .
+COPY spark/ .
+
 COPY jars/mysql-connector-j-8.3.0.jar /opt/spark/jars/mysql-connector-j-8.3.0.jar
+
 COPY requirements.txt .
-COPY tests/*.py .
+
+COPY tests/*.py tests/
+
 RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "consumer_main.py"]
+
