@@ -3,6 +3,7 @@ import time
 import json
 import random
 import logging
+import socket
 from faker import Faker
 from kafka import KafkaProducer
 
@@ -24,10 +25,25 @@ SEND_INTERVAL = float(os.getenv("SEND_INTERVAL", 1.0))
 fake = Faker()
 SENSOR_TYPES = ["temperatura", "umidade", "pressao", "luminosidade"]
 
+# =============================
+# Aguarda Kafka ficar disponível
+# =============================
+def wait_for_kafka(host='kafka', port=9092, timeout=30):
+    logging.info(f"Esperando Kafka em {host}:{port}...")
+    for i in range(timeout):
+        try:
+            with socket.create_connection((host, port), timeout=2):
+                logging.info("Kafka disponível!")
+                return
+        except OSError:
+            time.sleep(1)
+    raise Exception("Kafka não respondeu após vários segundos.")
+
 # ====================================
 # Tentativas de conexão com o Kafka
 # ====================================
 producer = None
+wait_for_kafka()
 for attempt in range(10):
     try:
         producer = KafkaProducer(
@@ -74,3 +90,4 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error(f"Erro ao enviar dado para o Kafka: {e}")
             time.sleep(2)
+
