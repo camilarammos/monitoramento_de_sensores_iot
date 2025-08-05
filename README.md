@@ -60,6 +60,20 @@ monitoramento_de_sensores_iot/
     └── test_mysql_writer.py
 └── README.md
 ```
+---
+
+## ⚙️ Variáveis de Ambiente
+
+| Variável                | Descrição                            | Valor padrão      |
+|-------------------------|----------------------------------------|-------------------|
+| KAFKA_BOOTSTRAP_SERVERS | Endereço do broker Kafka              | kafka:9092        |
+| KAFKA_TOPIC             | Nome do tópico Kafka                  | iot-sensores      |
+| SEND_INTERVAL           | Intervalo entre envios do Producer    | 1.0 (segundos)    |
+| MYSQL_URL               | URL JDBC para conexão com MySQL       | jdbc:mysql://...  |
+| MYSQL_USER              | Usuário do banco                      | root              |
+| MYSQL_PASSWORD          | Senha do banco                        | root              |
+| MYSQL_TABLE             | Tabela onde os dados serão gravados   | leituras          |
+| CHECKPOINT_PATH         | Caminho de checkpoint do Spark        | /tmp/spark-checkpoint |
 
 ---
 
